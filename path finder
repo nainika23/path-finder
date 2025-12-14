@@ -1,0 +1,85 @@
+CREATE TABLE Student (
+    StudentID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Address VARCHAR(200),
+    Gender VARCHAR(10),
+    DateOfBirth DATE,
+    DegreeProgram VARCHAR(100),
+    GPA DECIMAL(3,2),
+    Email VARCHAR(150) UNIQUE,
+    PhoneNumber VARCHAR(20)
+);
+CREATE TABLE Company (
+    CompanyID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(150) NOT NULL,
+    Industry VARCHAR(100),
+    Location VARCHAR(150),
+    ContactPerson VARCHAR(100),
+    ContactEmail VARCHAR(150),
+    Website VARCHAR(200)
+);
+CREATE TABLE Supervisor (
+    SupervisorID INT PRIMARY KEY AUTO_INCREMENT,
+    Name VARCHAR(100) NOT NULL,
+    Title VARCHAR(100),
+    Email VARCHAR(150),
+    PhoneNumber VARCHAR(20)
+);
+CREATE TABLE Internship (
+    InternshipID INT PRIMARY KEY AUTO_INCREMENT,
+    CompanyID INT NOT NULL,
+    Title VARCHAR(150) NOT NULL,
+    Description TEXT,
+    Requirements TEXT,
+    StartDate DATE,
+    EndDate DATE,
+    Stipend DECIMAL(10,2),
+    Location VARCHAR(100),
+    Status VARCHAR(20) DEFAULT 'Open',
+    FOREIGN KEY (CompanyID) REFERENCES Company(CompanyID)
+);
+CREATE TABLE Application (
+    ApplicationID INT PRIMARY KEY AUTO_INCREMENT,
+    StudentID INT NOT NULL,
+    InternshipID INT NOT NULL,
+    SupervisorID INT,
+    ApplicationDate DATE,
+    Status VARCHAR(20) DEFAULT 'Submitted',
+    CoverLetter VARCHAR(300),
+    Resume VARCHAR(300),
+    FOREIGN KEY (StudentID) REFERENCES Student(StudentID),
+    FOREIGN KEY (InternshipID) REFERENCES Internship(InternshipID),
+    FOREIGN KEY (SupervisorID) REFERENCES Supervisor(SupervisorID)
+);
+INSERT INTO Company (Name, Industry, Location, ContactPerson, ContactEmail, Website)
+VALUES
+('TechSoft Pvt Ltd', 'Software', 'Bangalore', 'Amit Verma', 'amit@techsoft.com', 'www.techsoft.com'),
+('GreenEnergy Corp', 'Energy', 'Hyderabad', 'Suman Rao', 'suman@greenenergy.com', 'www.greenenergy.com'),('Wipro','software,'chennai','avinash','avinash@wipro.com','www.wipro.com'),('amazon','hardware,'Hyderbad','kavya','kavya@wipro.com','www.amazon.com');
+INSERT INTO Supervisor (Name, Title, Email, PhoneNumber)
+VALUES
+('Dr. Meera Nair', 'Senior Mentor', 'meera@university.edu', '9998887776'),
+('Mr. Arjun Patel', 'Project Supervisor', 'arjun@techsoft.com', '8887776665'),('Mrs.Sravani Reddy','HR','sravani@kpit.com',8688092450'),('Mr. Rajath Patel', 'Mentor', 'rajath@soft.com', '8987776665'),('Mr. Dayaker', 'Manager', 'daya@software.com', '8988876665');
+INSERT INTO Internship (CompanyID, Title, Description, Requirements, StartDate, EndDate, Stipend, Location, Status)
+VALUES
+(1, 'Web Developer Intern', 'Frontend development', 'HTML, CSS, JS', '2025-06-01', '2025-08-30', 15000, 'Bangalore', 'Open'),
+(2, 'Research Intern', 'Energy research project', 'Engineering Background', '2025-05-01', '2025-07-30', 12000, 'Hyderabad', 'Open'),(3,'Data base intern','Backend Development','JAVA, PYTHON','2025-07-07','2025-09-09',15000,'Pune','Open'),(4,'Graphic Developer intern','VFX','HTML ,CSS','2025-10-12','2025-12-10','19000','Delhi','Open'),(5,'Project Manager','Database','PYTHON ,HTML,C','2025-09-22','2025-11-23','12000','Kerala','Closes soon');
+INSERT INTO Application (StudentID, InternshipID, SupervisorID, ApplicationDate, Status, CoverLetter, Resume)
+VALUES
+(1, 1, 2, '2025-03-01', 'Submitted', 'cover1.pdf', 'resume1.pdf'),
+(2, 2, 1, '2025-03-05', 'Reviewed', 'cover2.pdf', 'resume2.pdf'),
+(3,3,3,'2025-03-07',Submitted',cover3.pdf','resume3.pdf),(4,4,2,'2025-03-28','Reviewed','cover4.pdf','resume4.pdf'),(5,5,1,'2025-03-23','Not submitted','cover4.pdf','resume3.pdf');
+
+SELECT i.Title, i.Status, c.Name AS Company
+FROM Internship i
+JOIN Company c ON i.CompanyID = c.CompanyID;
+
+SELECT s.Name AS Student, i.Title AS Internship, a.Status
+FROM Application a
+JOIN Student s ON a.StudentID = s.StudentID
+JOIN Internship i ON a.InternshipID = i.InternshipID;
+
+SELECT sup.Name AS Supervisor, stu.Name AS Student, i.Title AS Internship
+FROM Application a
+JOIN Supervisor sup ON a.SupervisorID = sup.SupervisorID
+JOIN Student stu ON a.StudentID = stu.StudentID
+JOIN Internship i ON a.InternshipID = i.InternshipID;
